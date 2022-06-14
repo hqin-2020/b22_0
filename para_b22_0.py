@@ -7,7 +7,7 @@ import os
 import time
 batch_n = np.random.randint(1,10000)
 np.set_printoptions(suppress = True)
-from Minimization import minimization
+from Minimization_b22_0 import minimization
 from concurrent.futures import ProcessPoolExecutor
 
 n_simulation = 50
@@ -96,6 +96,7 @@ def sim_obs(θ):
 
 if __name__ == '__main__':
     batch_results = []
+    obs_results = []
     for i in range(n_simulation):
         obs_series, Z_series, S_series, Wz, Ws = sim_obs(θ_true)
         obs_series = [obs_series for _ in range(start_trials)] 
@@ -103,6 +104,9 @@ if __name__ == '__main__':
             results = pool.map(minimization, obs_series)
         results = [r for r in results]
         batch_results.append(results)
+        obs_results.append([obs_series, Z_series, S_series, Wz, Ws])
 
 with open('data_'+str(batch_n)+'.pkl', 'wb') as f:
        pickle.dump(batch_results, f)
+with open('data_obs'+str(batch_n)+'.pkl', 'wb') as f:
+       pickle.dump(obs_results, f)
